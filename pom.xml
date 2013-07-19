@@ -57,6 +57,12 @@
 			<artifactId>jackson-jaxrs</artifactId>
 			<version>1.9.12</version>
 		</dependency>
+		<dependency>
+			<!-- Necessary to understand JAXB annotations -->
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-xc</artifactId>
+			<version>1.9.12</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

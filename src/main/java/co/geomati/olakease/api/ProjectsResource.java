@@ -4,9 +4,12 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -35,4 +38,22 @@ public class ProjectsResource {
 		}
 	}
 
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Project newProject(Project project) {
+		EntityManagerFactory emf = Persistence
+				.createEntityManagerFactory("olakease");
+		EntityManager entityManager = emf.createEntityManager();
+		try {
+			EntityTransaction transaction = entityManager.getTransaction();
+			transaction.begin();
+			entityManager.persist(project);
+			transaction.commit();
+			return project;
+		} finally {
+			entityManager.close();
+			emf.close();
+		}
+	}
 }

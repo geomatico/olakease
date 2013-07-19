@@ -7,7 +7,8 @@
 		<class>co.geomati.olakease.persistence.Project</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:h2:///tmp/test" />
+			<property name="javax.persistence.jdbc.url"
+				value="jdbc:h2:tcp://localhost:9092/home/fergonco/b/java/geomatico/olakease/tmp/test" />
 			<property name="javax.persistence.jdbc.user" value="sa" />
 			<property name="javax.persistence.jdbc.password" value="" />
 
