@@ -1,38 +1,30 @@
 package co.geomati;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
 
-/**
- * Unit test for simple App.
- */
-public class AppTest 
-    extends TestCase
-{
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public AppTest( String testName )
-    {
-        super( testName );
-    }
+import org.junit.Test;
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( AppTest.class );
-    }
+import co.geomati.olakease.Project;
 
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp()
-    {
-        assertTrue( true );
-    }
+public class AppTest {
+
+	@Test
+	public void testname() throws Exception {
+		EntityManagerFactory emf = Persistence
+				.createEntityManagerFactory("olakease");
+		EntityManager entityManager = emf.createEntityManager();
+		EntityTransaction transaction = entityManager.getTransaction();
+		transaction.begin();
+		Project feedback = new Project();
+		feedback.setId(211);
+		feedback.setName("olakease");
+		feedback.setDescription("Resource management");
+		entityManager.persist(feedback);
+		transaction.commit();
+		entityManager.close();
+		emf.close();
+	}
 }
