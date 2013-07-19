@@ -21,4 +21,7 @@
 	<welcome-file-list>
 		<welcome-file>/api/projects</welcome-file>
 	</welcome-file-list>
+	<listener>
+		<listener-class>co.geomati.olakease.api.ApplicationListener</listener-class>
+	</listener>
 </web-app>

@@ -1,25 +1,28 @@
 package co.geomati.api;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.h2.tools.Server;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import co.geomati.olakease.api.ApplicationListener;
 import co.geomati.olakease.api.ProjectsResource;
 import co.geomati.olakease.persistence.Project;
 
@@ -33,18 +36,22 @@ public class ProjectsTest extends JerseyTest {
 		if (server.start() == null) {
 			throw new Exception("Cannot start server");
 		}
+		new ApplicationListener().contextInitialized(null);
 	}
 
 	@AfterClass
 	public static void stopDBMS() throws Exception {
 		server.stop();
+		new ApplicationListener().contextDestroyed(null);
 	}
 
-	@After
 	@Before
 	public void clearDB() {
-		File db = new File("tmp/test.h2.db");
-		assertTrue(!db.exists() || db.delete());
+		EntityManager entityManager = ApplicationListener.getEntityManager();
+		EntityTransaction transaction = entityManager.getTransaction();
+		transaction.begin();
+		entityManager.createQuery("DELETE FROM Project").executeUpdate();
+		transaction.commit();
 	}
 
 	@Override
@@ -58,13 +65,19 @@ public class ProjectsTest extends JerseyTest {
 
 	@Test
 	public void testPostProject() throws Exception {
+		Response response = postProject();
+		assertEquals(200, response.getStatus());
+	}
+
+	private Response postProject() throws IOException, JsonGenerationException,
+			JsonMappingException {
 		Project project = new Project();
 		project.setId(9);
 		project.setName("olakease");
 		project.setDescription("Olakease resource management");
 		Response response = target("projects").request().post(
 				Entity.json(new ObjectMapper().writeValueAsString(project)));
-		assertEquals(200, response.getStatus());
+		return response;
 	}
 
 	@Test
@@ -88,11 +101,16 @@ public class ProjectsTest extends JerseyTest {
 
 	@Test
 	public void testGetProject() throws Exception {
-		testPostProject();
+		Response postResponse = postProject();
+		assertEquals(200, postResponse.getStatus());
+		Project postedProject = new ObjectMapper().readValue(
+				postResponse.readEntity(String.class), Project.class);
 
-		String response = target("projects/1").request().get(String.class);
-		Project project = new ObjectMapper().readValue(response, Project.class);
-		assertEquals(1, project.getId());
+		String getResponse = target("projects/" + postedProject.getId())
+				.request().get(String.class);
+		Project project = new ObjectMapper().readValue(getResponse,
+				Project.class);
+		assertEquals(postedProject.getId(), project.getId());
 		assertEquals("olakease", project.getName());
 	}
 
