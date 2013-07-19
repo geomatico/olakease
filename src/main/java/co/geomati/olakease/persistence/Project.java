@@ -1,4 +1,4 @@
-package co.geomati.olakease;
+package co.geomati.olakease.persistence;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,7 +14,7 @@ public class Project {
 	private String name;
 
 	private String description;
-
+	
 	public long getId() {
 		return id;
 	}

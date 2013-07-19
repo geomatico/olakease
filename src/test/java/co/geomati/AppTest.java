@@ -7,7 +7,7 @@ import javax.persistence.Persistence;
 
 import org.junit.Test;
 
-import co.geomati.olakease.Project;
+import co.geomati.olakease.persistence.Project;
 
 public class AppTest {
 
