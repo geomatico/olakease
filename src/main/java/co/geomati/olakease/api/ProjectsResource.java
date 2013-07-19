@@ -30,7 +30,6 @@ public class ProjectsResource {
 			TypedQuery<Project> query = entityManager.createQuery(
 					"Select p from Project p", Project.class);
 			List<Project> results = query.getResultList();
-			System.out.println(results.size());
 			return results;
 		} finally {
 			entityManager.close();

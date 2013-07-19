@@ -1,19 +1,22 @@
 package co.geomati.api;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
+
+import java.io.File;
+import java.util.List;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.h2.tools.Server;
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -35,6 +38,13 @@ public class ProjectsTest extends JerseyTest {
 	@AfterClass
 	public static void stopDBMS() throws Exception {
 		server.stop();
+	}
+
+	@After
+	@Before
+	public void clearDB() {
+		File db = new File("tmp/test.h2.db");
+		assertTrue(!db.exists() || db.delete());
 	}
 
 	@Override
@@ -67,12 +77,23 @@ public class ProjectsTest extends JerseyTest {
 
 	@Test
 	public void testGetProjects() throws Exception {
+		testPostProject();
+
 		String response = target("projects").request().get(String.class);
-		ObjectMapper mapper = new ObjectMapper();
-		JsonFactory factory = mapper.getJsonFactory();
-		JsonParser jp = factory.createJsonParser(response);
-		JsonNode actualObj = mapper.readTree(jp);
-		assertEquals(1, actualObj.size());
+		@SuppressWarnings("unchecked")
+		List<Project> projects = new ObjectMapper().readValue(response,
+				List.class);
+		assertEquals(1, projects.size());
+	}
+
+	@Test
+	public void testGetProject() throws Exception {
+		testPostProject();
+
+		String response = target("projects/1").request().get(String.class);
+		Project project = new ObjectMapper().readValue(response, Project.class);
+		assertEquals(1, project.getId());
+		assertEquals("olakease", project.getName());
 	}
 
 }
