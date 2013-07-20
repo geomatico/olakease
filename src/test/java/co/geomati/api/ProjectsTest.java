@@ -75,6 +75,11 @@ public class ProjectsTest extends JerseyTest {
 		project.setId(9);
 		project.setName("olakease");
 		project.setDescription("Olakease resource management");
+		return postProject(project);
+	}
+
+	private Response postProject(Project project) throws IOException,
+			JsonGenerationException, JsonMappingException {
 		Response response = target("projects").request().post(
 				Entity.json(new ObjectMapper().writeValueAsString(project)));
 		return response;
@@ -105,13 +110,40 @@ public class ProjectsTest extends JerseyTest {
 		assertEquals(200, postResponse.getStatus());
 		Project postedProject = new ObjectMapper().readValue(
 				postResponse.readEntity(String.class), Project.class);
+		long projectId = postedProject.getId();
 
-		String getResponse = target("projects/" + postedProject.getId())
-				.request().get(String.class);
+		String getResponse = target("projects/" + projectId).request().get(
+				String.class);
 		Project project = new ObjectMapper().readValue(getResponse,
 				Project.class);
-		assertEquals(postedProject.getId(), project.getId());
+		assertEquals(projectId, project.getId());
 		assertEquals("olakease", project.getName());
 	}
 
+	@Test
+	public void testPutProject() throws Exception {
+		Project project = new Project();
+		project.setId(9);
+		project.setName("olakease");
+		project.setDescription("Olakease resource management");
+		Response postResponse = postProject(project);
+		assertEquals(200, postResponse.getStatus());
+		Project postedProject = new ObjectMapper().readValue(
+				postResponse.readEntity(String.class), Project.class);
+		long projectId = postedProject.getId();
+
+		String editedDescription = "new description";
+		project.setDescription(editedDescription);
+		Response putResponse = target("projects/" + projectId).request().put(
+				Entity.json(new ObjectMapper().writeValueAsString(project)));
+		assertEquals(200, putResponse.getStatus());
+
+		String getResponse = target("projects/" + projectId).request().get(
+				String.class);
+		Project updatedProject = new ObjectMapper().readValue(getResponse,
+				Project.class);
+		assertEquals(projectId, updatedProject.getId());
+		assertEquals("olakease", updatedProject.getName());
+		assertEquals(editedDescription, updatedProject.getDescription());
+	}
 }
