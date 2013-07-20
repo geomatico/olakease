@@ -15,31 +15,19 @@ public class ProjectResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Project asJSON(@PathParam("projectId") String id) {
-		long longId;
-		try {
-			longId = Long.parseLong(id);
-		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException("Project ids are numbers");
-		}
+	public Project asJSON(@PathParam("projectId") long id) {
 		Project project = ApplicationListener.getEntityManager().find(
-				Project.class, longId);
+				Project.class, id);
 		return project;
 	}
 
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
-	public Project put(@PathParam("projectId") String id, Project modifications) {
-		long longId;
-		try {
-			longId = Long.parseLong(id);
-		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException("Project ids are numbers");
-		}
+	public Project put(@PathParam("projectId") long id, Project modifications) {
 		EntityManager entityManager = ApplicationListener.getEntityManager();
-		Project project = entityManager.find(Project.class, longId);
+		Project project = entityManager.find(Project.class, id);
 		if (project != null) {
-			modifications.setId(longId);
+			modifications.setId(id);
 			entityManager.merge(modifications);
 		}
 
