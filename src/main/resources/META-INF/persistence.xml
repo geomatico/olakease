@@ -4,6 +4,7 @@
 	version="2.0">
 	<persistence-unit name="olakease">
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<class>co.geomati.olakease.persistence.AbstractIdentifiableEntity</class>
 		<class>co.geomati.olakease.persistence.Project</class>
 		<class>co.geomati.olakease.persistence.Developer</class>
 		<properties>
