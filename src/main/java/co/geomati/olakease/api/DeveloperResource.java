@@ -1,5 +1,6 @@
 package co.geomati.olakease.api;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -13,6 +14,12 @@ public class DeveloperResource extends AbstractSingleResource<Developer> {
 
 	public DeveloperResource() {
 		super(Developer.class);
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Developer asJSON(@PathParam("developerId") long id) {
+		return super.asJSON(id);
 	}
 
 	@PUT

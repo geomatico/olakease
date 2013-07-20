@@ -1,149 +1,54 @@
 package co.geomati.api;
 
 import static junit.framework.Assert.assertEquals;
-
-import java.io.IOException;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Response;
-
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.test.JerseyTest;
-import org.h2.tools.Server;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import co.geomati.olakease.api.ApplicationListener;
-import co.geomati.olakease.api.ProjectsResource;
 import co.geomati.olakease.persistence.Project;
 
-public class ProjectsTest extends JerseyTest {
+public class ProjectsTest extends AbstractResourceManagementTest<Project> {
 
-	private static Server server;
+	private static String PUT_DESCRIPTION = "new description";
+	private static String PUT_NAME = "new name";
+	private static String POST_DESCRIPTION = "Olakease resource management";
+	private static String POST_NAME = "olakease";
 
-	@BeforeClass
-	public static void startDBMS() throws Exception {
-		server = Server.createTcpServer();
-		if (server.start() == null) {
-			throw new Exception("Cannot start server");
-		}
-		new ApplicationListener().contextInitialized(null);
-	}
-
-	@AfterClass
-	public static void stopDBMS() throws Exception {
-		server.stop();
-		new ApplicationListener().contextDestroyed(null);
-	}
-
-	@Before
-	public void clearDB() {
-		EntityManager entityManager = ApplicationListener.getEntityManager();
-		EntityTransaction transaction = entityManager.getTransaction();
-		transaction.begin();
-		entityManager.createQuery("DELETE FROM Project").executeUpdate();
-		transaction.commit();
+	@Override
+	protected String getCleanSQL() {
+		return "DELETE FROM Project";
 	}
 
 	@Override
-	protected Application configure() {
-		ResourceConfig resourceConfig = new ResourceConfig(
-				ProjectsResource.class);
-		resourceConfig.packages("co.geomati.olakease.api;"
-				+ "org.codehaus.jackson.jaxrs");
-		return resourceConfig;
+	protected String getPath() {
+		return "projects";
 	}
 
-	@Test
-	public void testPostProject() throws Exception {
-		Response response = postProject();
-		assertEquals(200, response.getStatus());
+	@Override
+	protected Class<Project> getResourceClass() {
+		return Project.class;
 	}
 
-	private Response postProject() throws IOException, JsonGenerationException,
-			JsonMappingException {
+	@Override
+	protected Project createResourceToPost() {
 		Project project = new Project();
 		project.setId(9);
-		project.setName("olakease");
-		project.setDescription("Olakease resource management");
-		return postProject(project);
+		project.setName(POST_NAME);
+		project.setDescription(POST_DESCRIPTION);
+		return project;
 	}
 
-	private Response postProject(Project project) throws IOException,
-			JsonGenerationException, JsonMappingException {
-		Response response = target("projects").request().post(
-				Entity.json(new ObjectMapper().writeValueAsString(project)));
-		return response;
+	@Override
+	protected void checkResourceIsEqualPosted(Project project) {
+		assertEquals(POST_NAME, project.getName());
+		assertEquals(POST_DESCRIPTION, project.getDescription());
 	}
 
-	@Test
-	public void testPostProjectWrongParameterTypes() throws Exception {
-		Response response = target("projects").request().post(
-				Entity.json("{\"id\":\"a\", \"name\":\"olakease\", "
-						+ "\"description\":\"olakease\"}"));
-		assertEquals(400, response.getStatus());
+	@Override
+	protected void modifyResource(Project resource) {
+		resource.setDescription(PUT_DESCRIPTION);
+		resource.setName(PUT_NAME);
 	}
 
-	@Test
-	public void testGetProjects() throws Exception {
-		testPostProject();
-
-		String response = target("projects").request().get(String.class);
-		@SuppressWarnings("unchecked")
-		List<Project> projects = new ObjectMapper().readValue(response,
-				List.class);
-		assertEquals(1, projects.size());
-	}
-
-	@Test
-	public void testGetProject() throws Exception {
-		Response postResponse = postProject();
-		assertEquals(200, postResponse.getStatus());
-		Project postedProject = new ObjectMapper().readValue(
-				postResponse.readEntity(String.class), Project.class);
-		long projectId = postedProject.getId();
-
-		String getResponse = target("projects/" + projectId).request().get(
-				String.class);
-		Project project = new ObjectMapper().readValue(getResponse,
-				Project.class);
-		assertEquals(projectId, project.getId());
-		assertEquals("olakease", project.getName());
-	}
-
-	@Test
-	public void testPutProject() throws Exception {
-		Project project = new Project();
-		project.setId(9);
-		project.setName("olakease");
-		project.setDescription("Olakease resource management");
-		Response postResponse = postProject(project);
-		assertEquals(200, postResponse.getStatus());
-		Project postedProject = new ObjectMapper().readValue(
-				postResponse.readEntity(String.class), Project.class);
-		long projectId = postedProject.getId();
-
-		String editedDescription = "new description";
-		project.setDescription(editedDescription);
-		Response putResponse = target("projects/" + projectId).request().put(
-				Entity.json(new ObjectMapper().writeValueAsString(project)));
-		assertEquals(200, putResponse.getStatus());
-
-		String getResponse = target("projects/" + projectId).request().get(
-				String.class);
-		Project updatedProject = new ObjectMapper().readValue(getResponse,
-				Project.class);
-		assertEquals(projectId, updatedProject.getId());
-		assertEquals("olakease", updatedProject.getName());
-		assertEquals(editedDescription, updatedProject.getDescription());
+	@Override
+	protected void checkResourceIsModified(Project updatedProject) {
+		assertEquals(PUT_NAME, updatedProject.getName());
+		assertEquals(PUT_DESCRIPTION, updatedProject.getDescription());
 	}
 }
