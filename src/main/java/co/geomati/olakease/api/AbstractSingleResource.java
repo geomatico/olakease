@@ -2,31 +2,29 @@ package co.geomati.olakease.api;
 
 import javax.persistence.EntityManager;
 
-import co.geomati.olakease.persistence.AbstractIdentifiableEntity;
+public abstract class AbstractSingleResource<IN, OUT> {
 
-public class AbstractSingleResource<T extends AbstractIdentifiableEntity> {
+	private Class<OUT> resourceClass;
 
-	private Class<T> resourceClass;
-
-	public AbstractSingleResource(Class<T> resourceClass) {
-		this.resourceClass = resourceClass;
+	public AbstractSingleResource(Class<OUT> outClass) {
+		this.resourceClass = outClass;
 	}
 
-	public T asJSON(long id) {
-		T jpaEntity = ApplicationListener.getEntityManager().find(
+	public OUT asJSON(long id) {
+		OUT jpaEntity = ApplicationListener.getEntityManager().find(
 				resourceClass, id);
 		return jpaEntity;
 	}
 
-	public T put(long id, T modifications) {
+	public OUT put(long id, IN modifications) {
 		EntityManager entityManager = ApplicationListener.getEntityManager();
-		T original = entityManager.find(resourceClass, id);
-		if (original != null) {
-			modifications.setId(id);
-			entityManager.merge(modifications);
-		}
+		OUT original = mergeModifications(entityManager, id, modifications);
+		entityManager.merge(original);
 
-		return modifications;
+		return original;
 	}
+
+	protected abstract OUT mergeModifications(EntityManager entityManager,
+			long id, IN modifications);
 
 }

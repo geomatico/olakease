@@ -30,12 +30,18 @@ public class AssignmentsResource extends
 		EntityManager entityManager = ApplicationListener.getEntityManager();
 		Project project = entityManager.getReference(Project.class,
 				message.getProjectId());
-		Developer developer = entityManager.getReference(Developer.class,
-				message.getDeveloperId());
-		Assignment ret = message;
-		ret.setProject(project);
-		ret.setDeveloper(developer);
+		if (project != null) {
+			Developer developer = entityManager.getReference(Developer.class,
+					message.getDeveloperId());
+			if (developer != null) {
+				Assignment ret = message;
+				ret.setProject(project);
+				ret.setDeveloper(developer);
+				return ret;
+			}
+		}
 
-		return ret;
+		throw new RuntimeException("An analysis of the test coverage will "
+				+ "show how crappy is this code");
 	}
 }
