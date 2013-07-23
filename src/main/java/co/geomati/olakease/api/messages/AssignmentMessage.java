@@ -28,13 +28,17 @@ public class AssignmentMessage extends Assignment {
 
 	@Override
 	public void setProject(Project project) {
-		throw new UnsupportedOperationException(
-				"For messages use only setProjectId");
+		if (project != null) {
+			throw new UnsupportedOperationException(
+					"For messages use only setProjectId");
+		}
 	}
 
 	@Override
 	public void setDeveloper(Developer developer) {
-		throw new UnsupportedOperationException(
-				"For messages use only setDeveloperId");
+		if (developer != null) {
+			throw new UnsupportedOperationException(
+					"For messages use only setDeveloperId");
+		}
 	}
 }

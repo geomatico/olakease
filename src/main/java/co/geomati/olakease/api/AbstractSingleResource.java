@@ -10,13 +10,13 @@ public abstract class AbstractSingleResource<IN, OUT> {
 		this.resourceClass = outClass;
 	}
 
-	public OUT asJSON(long id) {
+	public OUT asJSON(int id) {
 		OUT jpaEntity = ApplicationListener.getEntityManager().find(
 				resourceClass, id);
 		return jpaEntity;
 	}
 
-	public OUT put(long id, IN modifications) {
+	public OUT put(int id, IN modifications) {
 		EntityManager entityManager = ApplicationListener.getEntityManager();
 		OUT original = mergeModifications(entityManager, id, modifications);
 		entityManager.merge(original);
@@ -25,6 +25,6 @@ public abstract class AbstractSingleResource<IN, OUT> {
 	}
 
 	protected abstract OUT mergeModifications(EntityManager entityManager,
-			long id, IN modifications);
+			int id, IN modifications);
 
 }

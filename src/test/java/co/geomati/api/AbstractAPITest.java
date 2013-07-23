@@ -38,11 +38,13 @@ public abstract class AbstractAPITest extends JerseyTest {
 		EntityManager entityManager = ApplicationListener.getEntityManager();
 		EntityTransaction transaction = entityManager.getTransaction();
 		transaction.begin();
-		entityManager.createQuery(getCleanSQL()).executeUpdate();
+		String[] cleaningSQL = new String[] { "DELETE FROM Assignment",
+				"DELETE FROM Project", "DELETE FROM Developer" };
+		for (String sql : cleaningSQL) {
+			entityManager.createQuery(sql).executeUpdate();
+		}
 		transaction.commit();
 	}
-
-	protected abstract String getCleanSQL();
 
 	@Override
 	protected Application configure() {

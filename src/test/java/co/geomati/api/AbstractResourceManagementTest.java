@@ -15,28 +15,31 @@ import org.junit.Test;
 
 import co.geomati.olakease.persistence.AbstractIdentifiableEntity;
 
-public abstract class AbstractResourceManagementTest<T extends AbstractIdentifiableEntity>
+public abstract class AbstractResourceManagementTest<IN, OUT extends AbstractIdentifiableEntity>
 		extends AbstractAPITest {
 
 	@Test
 	public void testPostResource() throws Exception {
-		Response response = postResource();
-		assertEquals(200, response.getStatus());
+		postResource();
 	}
 
-	private Response postResource() throws IOException,
-			JsonGenerationException, JsonMappingException {
-		T resource = createResourceToPost();
-		return postResource(resource);
+	private OUT postResource() throws IOException, JsonGenerationException,
+			JsonMappingException {
+		IN resource = createResourceToPost();
+		return postResource(getPath(), resource, getOUTResourceClass());
 	}
 
-	protected abstract T createResourceToPost();
+	protected abstract IN createResourceToPost() throws IOException;
 
-	private Response postResource(T resource) throws IOException,
-			JsonGenerationException, JsonMappingException {
-		Response response = target(getPath()).request().post(
+	protected <LOCAL_IN, LOCAL_OUT> LOCAL_OUT postResource(String path,
+			LOCAL_IN resource, Class<LOCAL_OUT> returnClass)
+			throws IOException, JsonGenerationException, JsonMappingException {
+		Response response = target(path).request().post(
 				Entity.json(new ObjectMapper().writeValueAsString(resource)));
-		return response;
+		assertEquals(200, response.getStatus());
+		LOCAL_OUT postedResource = new ObjectMapper().readValue(
+				response.readEntity(String.class), returnClass);
+		return postedResource;
 	}
 
 	protected abstract String getPath();
@@ -54,55 +57,51 @@ public abstract class AbstractResourceManagementTest<T extends AbstractIdentifia
 
 		String response = target(getPath()).request().get(String.class);
 		@SuppressWarnings("unchecked")
-		List<T> resources = new ObjectMapper().readValue(response, List.class);
+		List<OUT> resources = new ObjectMapper()
+				.readValue(response, List.class);
 		assertEquals(1, resources.size());
 	}
 
 	@Test
 	public void testGetResource() throws Exception {
-		Response postResponse = postResource();
-		assertEquals(200, postResponse.getStatus());
-		T postedResource = new ObjectMapper().readValue(
-				postResponse.readEntity(String.class), getResourceClass());
-		long resourceId = postedResource.getId();
+		OUT postedResource = postResource();
+		int resourceId = postedResource.getId();
 
 		String getResponse = target(getPath() + "/" + resourceId).request()
 				.get(String.class);
-		T resource = new ObjectMapper().readValue(getResponse,
-				getResourceClass());
+		OUT resource = new ObjectMapper().readValue(getResponse,
+				getOUTResourceClass());
 		assertEquals(resourceId, resource.getId());
 		checkResourceIsEqualPosted(resource);
 	}
 
-	protected abstract void checkResourceIsEqualPosted(T resource);
+	protected abstract void checkResourceIsEqualPosted(OUT resource);
 
 	@Test
 	public void testPutResource() throws Exception {
-		T resource = createResourceToPost();
-		Response postResponse = postResource(resource);
-		assertEquals(200, postResponse.getStatus());
-		T postedResource = new ObjectMapper().readValue(
-				postResponse.readEntity(String.class), getResourceClass());
-		long resourceId = postedResource.getId();
+		IN message = createResourceToPost();
+		OUT postedResource = postResource(getPath(), message,
+				getOUTResourceClass());
+		int resourceId = postedResource.getId();
 
-		modifyResource(resource);
-		Response putResponse = target(getPath() + "/" + resourceId).request()
-				.put(Entity.json(new ObjectMapper()
-						.writeValueAsString(resource)));
+		modifyResource(message);
+		Response putResponse = target(getPath() + "/" + resourceId)
+				.request()
+				.put(Entity.json(new ObjectMapper().writeValueAsString(message)));
 		assertEquals(200, putResponse.getStatus());
 
 		String getResponse = target(getPath() + "/" + resourceId).request()
 				.get(String.class);
-		T updatedResource = new ObjectMapper().readValue(getResponse,
-				getResourceClass());
+		OUT updatedResource = new ObjectMapper().readValue(getResponse,
+				getOUTResourceClass());
 		assertEquals(resourceId, updatedResource.getId());
 		checkResourceIsModified(updatedResource);
 	}
 
-	protected abstract void checkResourceIsModified(T updatedResource);
+	protected abstract void checkResourceIsModified(OUT updatedResource);
 
-	protected abstract void modifyResource(T resource);
+	protected abstract void modifyResource(IN resource) throws IOException;
 
-	protected abstract Class<T> getResourceClass();
+	protected abstract Class<OUT> getOUTResourceClass();
 
 }

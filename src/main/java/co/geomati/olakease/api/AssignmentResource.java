@@ -22,21 +22,21 @@ public class AssignmentResource extends
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public Assignment asJSON(@PathParam("assignmentId") long id) {
+	public Assignment asJSON(@PathParam("assignmentId") int id) {
 		return super.asJSON(id);
 	}
 
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public Assignment put(@PathParam("assignmentId") long id,
+	public Assignment put(@PathParam("assignmentId") int id,
 			AssignmentMessage modifications) {
 		return super.put(id, modifications);
 	}
 
 	@Override
 	protected Assignment mergeModifications(EntityManager entityManager,
-			long id, AssignmentMessage modifications) {
+			int id, AssignmentMessage modifications) {
 		modifications.setId(id);
 		return modifications;
 	}

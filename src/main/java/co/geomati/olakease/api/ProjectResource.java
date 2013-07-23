@@ -20,19 +20,19 @@ public class ProjectResource extends AbstractSingleResource<Project, Project> {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public Project asJSON(@PathParam("projectId") long id) {
+	public Project asJSON(@PathParam("projectId") int id) {
 		return super.asJSON(id);
 	}
 
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public Project put(@PathParam("projectId") long id, Project modifications) {
+	public Project put(@PathParam("projectId") int id, Project modifications) {
 		return super.put(id, modifications);
 	}
 
 	@Override
-	protected Project mergeModifications(EntityManager entityManager, long id,
+	protected Project mergeModifications(EntityManager entityManager, int id,
 			Project modifications) {
 		modifications.setId(id);
 		return modifications;

@@ -3,7 +3,8 @@ package co.geomati.api;
 import static junit.framework.Assert.assertEquals;
 import co.geomati.olakease.persistence.Project;
 
-public class ProjectsTest extends AbstractResourceManagementTest<Project> {
+public class ProjectsTest extends
+		AbstractResourceManagementTest<Project, Project> {
 
 	private static String PUT_DESCRIPTION = "new description";
 	private static String PUT_NAME = "new name";
@@ -11,17 +12,12 @@ public class ProjectsTest extends AbstractResourceManagementTest<Project> {
 	private static String POST_NAME = "olakease";
 
 	@Override
-	protected String getCleanSQL() {
-		return "DELETE FROM Project";
-	}
-
-	@Override
 	protected String getPath() {
 		return "projects";
 	}
 
 	@Override
-	protected Class<Project> getResourceClass() {
+	protected Class<Project> getOUTResourceClass() {
 		return Project.class;
 	}
 

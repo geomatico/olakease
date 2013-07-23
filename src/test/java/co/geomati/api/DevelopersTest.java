@@ -3,15 +3,11 @@ package co.geomati.api;
 import static junit.framework.Assert.assertEquals;
 import co.geomati.olakease.persistence.Developer;
 
-public class DevelopersTest extends AbstractResourceManagementTest<Developer> {
+public class DevelopersTest extends
+		AbstractResourceManagementTest<Developer, Developer> {
 
 	private static String PUT_NAME = "new name";
 	private static String POST_NAME = "olakease";
-
-	@Override
-	protected String getCleanSQL() {
-		return "DELETE FROM Developer";
-	}
 
 	@Override
 	protected String getPath() {
@@ -19,7 +15,7 @@ public class DevelopersTest extends AbstractResourceManagementTest<Developer> {
 	}
 
 	@Override
-	protected Class<Developer> getResourceClass() {
+	protected Class<Developer> getOUTResourceClass() {
 		return Developer.class;
 	}
 
