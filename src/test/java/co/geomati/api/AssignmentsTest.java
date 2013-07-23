@@ -8,26 +8,24 @@ import java.sql.Date;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 
-import co.geomati.olakease.api.messages.AssignmentMessage;
 import co.geomati.olakease.persistence.Assignment;
 import co.geomati.olakease.persistence.Developer;
 import co.geomati.olakease.persistence.Project;
 
-public class AssignmentsTest extends
-		AbstractResourceManagementTest<AssignmentMessage, Assignment> {
+public class AssignmentsTest extends AbstractResourceManagementTest<Assignment> {
 
 	private static final int POST_WORKING_HOURS = 142;
 	private static final Date POST_START_DATE = new Date(
 			System.currentTimeMillis());
 	private static final int POST_HOURS_DAY_DEDICATION = 4;
-	private int POST_DEVELOPER_ID;
-	private int POST_PROJECT_ID;
+	private Developer POST_DEVELOPER_ID;
+	private Project POST_PROJECT_ID;
 
 	private static final int PUT_WORKING_HOURS = 100;
 	private static final Date PUT_START_DATE = new Date(0);
 	private static final int PUT_HOURS_DAY_DEDICATION = 2;
-	private int PUT_DEVELOPER_ID;
-	private int PUT_PROJECT_ID;
+	private Developer PUT_DEVELOPER_ID;
+	private Project PUT_PROJECT_ID;
 
 	@Override
 	protected String getPath() {
@@ -35,19 +33,19 @@ public class AssignmentsTest extends
 	}
 
 	@Override
-	protected Class<Assignment> getOUTResourceClass() {
+	protected Class<Assignment> getResourceClass() {
 		return Assignment.class;
 	}
 
 	@Override
-	protected AssignmentMessage createResourceToPost()
-			throws JsonGenerationException, JsonMappingException, IOException {
+	protected Assignment createResourceToPost() throws JsonGenerationException,
+			JsonMappingException, IOException {
 		Project project = addProject();
 		Developer developer = addDeveloper();
-		AssignmentMessage ret = new AssignmentMessage();
-		ret.setDeveloperId(POST_DEVELOPER_ID = developer.getId());
+		Assignment ret = new Assignment();
+		ret.setDeveloper(POST_DEVELOPER_ID = developer);
 		ret.setHoursDayDedication(POST_HOURS_DAY_DEDICATION);
-		ret.setProjectId(POST_PROJECT_ID = project.getId());
+		ret.setProject(POST_PROJECT_ID = project);
 		ret.setStart(POST_START_DATE);
 		ret.setWorkingHours(POST_WORKING_HOURS);
 
@@ -79,18 +77,19 @@ public class AssignmentsTest extends
 				assignment.getHoursDayDedication());
 		assertEquals(POST_START_DATE, assignment.getStart());
 		assertEquals(POST_WORKING_HOURS, assignment.getWorkingHours());
-		assertEquals(POST_DEVELOPER_ID, assignment.getDeveloper().getId());
-		assertEquals(POST_PROJECT_ID, assignment.getProject().getId());
+		assertEquals(POST_DEVELOPER_ID.getId(), assignment.getDeveloper()
+				.getId());
+		assertEquals(POST_PROJECT_ID.getId(), assignment.getProject().getId());
 	}
 
 	@Override
-	protected void modifyResource(AssignmentMessage resource)
+	protected void modifyResource(Assignment resource)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		Project project = addProject();
 		Developer developer = addDeveloper();
-		resource.setDeveloperId(PUT_DEVELOPER_ID = developer.getId());
+		resource.setDeveloper(PUT_DEVELOPER_ID = developer);
 		resource.setHoursDayDedication(PUT_HOURS_DAY_DEDICATION);
-		resource.setProjectId(PUT_PROJECT_ID = project.getId());
+		resource.setProject(PUT_PROJECT_ID = project);
 		resource.setStart(PUT_START_DATE);
 		resource.setWorkingHours(PUT_WORKING_HOURS);
 	}
@@ -101,7 +100,9 @@ public class AssignmentsTest extends
 				updatedAssignment.getHoursDayDedication());
 		assertEquals(PUT_START_DATE, updatedAssignment.getStart());
 		assertEquals(PUT_WORKING_HOURS, updatedAssignment.getWorkingHours());
-		assertEquals(PUT_DEVELOPER_ID, updatedAssignment.getDeveloper().getId());
-		assertEquals(PUT_PROJECT_ID, updatedAssignment.getProject().getId());
+		assertEquals(PUT_DEVELOPER_ID.getId(), updatedAssignment.getDeveloper()
+				.getId());
+		assertEquals(PUT_PROJECT_ID.getId(), updatedAssignment.getProject()
+				.getId());
 	}
 }

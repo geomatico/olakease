@@ -6,10 +6,13 @@ import javax.ws.rs.Path;
 import co.geomati.olakease.persistence.Developer;
 
 @Path("/developers")
-public class DevelopersResource extends
-		AbstractResourceList<Developer, Developer> {
+public class DevelopersResource extends AbstractResourceList<Developer> {
 
 	private static TypedQuery<Developer> query;
+
+	public DevelopersResource() {
+		super(Developer.class);
+	}
 
 	@Override
 	protected TypedQuery<Developer> getQuery() {
@@ -19,11 +22,6 @@ public class DevelopersResource extends
 		}
 
 		return query;
-	}
-
-	@Override
-	protected Developer message2jpa(Developer message) {
-		return message;
 	}
 
 }

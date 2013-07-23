@@ -3,8 +3,7 @@ package co.geomati.api;
 import static junit.framework.Assert.assertEquals;
 import co.geomati.olakease.persistence.Project;
 
-public class ProjectsTest extends
-		AbstractResourceManagementTest<Project, Project> {
+public class ProjectsTest extends AbstractResourceManagementTest<Project> {
 
 	private static String PUT_DESCRIPTION = "new description";
 	private static String PUT_NAME = "new name";
@@ -17,7 +16,7 @@ public class ProjectsTest extends
 	}
 
 	@Override
-	protected Class<Project> getOUTResourceClass() {
+	protected Class<Project> getResourceClass() {
 		return Project.class;
 	}
 
@@ -47,4 +46,5 @@ public class ProjectsTest extends
 		assertEquals(PUT_NAME, updatedProject.getName());
 		assertEquals(PUT_DESCRIPTION, updatedProject.getDescription());
 	}
+
 }
