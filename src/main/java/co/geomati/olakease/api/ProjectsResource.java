@@ -6,7 +6,7 @@ import javax.ws.rs.Path;
 import co.geomati.olakease.persistence.Project;
 
 @Path("/projects")
-public class ProjectsResource extends AbstractResourceList<Project> {
+public class ProjectsResource extends AbstractResourceList<Project, Project> {
 
 	private static TypedQuery<Project> query;
 
@@ -18,6 +18,11 @@ public class ProjectsResource extends AbstractResourceList<Project> {
 		}
 
 		return query;
+	}
+
+	@Override
+	protected Project message2jpa(Project message) {
+		return message;
 	}
 
 }

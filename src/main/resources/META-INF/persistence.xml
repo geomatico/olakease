@@ -7,6 +7,7 @@
 		<class>co.geomati.olakease.persistence.AbstractIdentifiableEntity</class>
 		<class>co.geomati.olakease.persistence.Project</class>
 		<class>co.geomati.olakease.persistence.Developer</class>
+		<class>co.geomati.olakease.persistence.Assignment</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
 			<property name="javax.persistence.jdbc.url"

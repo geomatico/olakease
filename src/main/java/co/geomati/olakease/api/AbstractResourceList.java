@@ -11,26 +11,29 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-public abstract class AbstractResourceList<T> {
+public abstract class AbstractResourceList<IN, OUT> {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<T> asJSON() {
-		List<T> results = getQuery().getResultList();
+	public List<OUT> asJSON() {
+		List<OUT> results = getQuery().getResultList();
 		return results;
 	}
 
-	protected abstract TypedQuery<T> getQuery();
+	protected abstract TypedQuery<OUT> getQuery();
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public T newProject(T jpaEntity) {
+	public OUT newProject(IN message) {
 		EntityManager entityManager = ApplicationListener.getEntityManager();
 		EntityTransaction transaction = entityManager.getTransaction();
+		OUT jpaEntity = message2jpa(message);
 		transaction.begin();
 		entityManager.persist(jpaEntity);
 		transaction.commit();
 		return jpaEntity;
 	}
+
+	protected abstract OUT message2jpa(IN message);
 }
