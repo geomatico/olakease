@@ -1,6 +1,8 @@
 package co.geomati.olakease.api.messages;
 
 import co.geomati.olakease.persistence.Assignment;
+import co.geomati.olakease.persistence.Developer;
+import co.geomati.olakease.persistence.Project;
 
 public class AssignmentMessage extends Assignment {
 
@@ -24,4 +26,15 @@ public class AssignmentMessage extends Assignment {
 		this.developerId = developerId;
 	}
 
+	@Override
+	public void setProject(Project project) {
+		throw new UnsupportedOperationException(
+				"For messages use only setProjectId");
+	}
+
+	@Override
+	public void setDeveloper(Developer developer) {
+		throw new UnsupportedOperationException(
+				"For messages use only setDeveloperId");
+	}
 }
