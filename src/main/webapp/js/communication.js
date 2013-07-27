@@ -53,6 +53,23 @@ geomatico.communication = function() {
                }
             });
          });
+         $(document).bind('delete', function(event, collectionPath, entityPath) {
+            $.ajax({
+               type : 'DELETE',
+               url : '/olakease/api/' + entityPath,
+               contentType : "application/json",
+               beforeSend : function() {
+                  // this is where we append a loading image
+               },
+               success : function(data) {
+                  $(document).trigger("get", collectionPath);
+               },
+               error : function() {
+                  // failed request; give feedback to user
+                  console.log('error');
+               }
+            });
+         });
       }
    };
 };

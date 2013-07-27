@@ -27,6 +27,7 @@ geomatico.entityLine = function() {
 
    var div = null;
    var btnModify = null;
+   var btnDelete = null;
    var btnSave = null;
    var btnCancel = null;
    var readOnlyDiv = null;
@@ -35,6 +36,7 @@ geomatico.entityLine = function() {
       edit : function() {
          readOnlyDiv.hide();
          btnModify.hide();
+         btnDelete.hide();
          readWriteDiv.show();
          btnCancel.show();
          btnSave.show();
@@ -43,6 +45,7 @@ geomatico.entityLine = function() {
          div.addClass(selectedDivClass);
          readOnlyDiv.show();
          btnModify.show();
+         btnDelete.show();
          readWriteDiv.hide();
          btnCancel.hide();
          btnSave.hide();
@@ -51,6 +54,7 @@ geomatico.entityLine = function() {
          div.removeClass(selectedDivClass);
          readOnlyDiv.show();
          btnModify.hide();
+         btnDelete.hide();
          readWriteDiv.hide();
          btnCancel.hide();
          btnSave.hide();
@@ -80,7 +84,16 @@ geomatico.entityLine = function() {
                .hide();
             div.append(btnModify);
             btnModify.click(function(event) {
-               $(document).trigger(entityPath + "-toModify", entity);
+               this_.edit();
+               event.stopPropagation();
+            });
+         }
+         {
+            btnDelete = $("<div>").html("DELETE").addClass("entity-button")
+               .hide();
+            div.append(btnDelete);
+            btnDelete.click(function(event) {
+               $(document).trigger("delete", [ entityPath, entityPath + "/" + entity.id ]);
                event.stopPropagation();
             });
          }
@@ -111,12 +124,6 @@ geomatico.entityLine = function() {
                   this_.selected();
                } else {
                   this_.unselected();
-               }
-            });
-         $(document).bind(entityPath + "-toModify",
-            function(event, selectedEntity) {
-               if (entity == selectedEntity) {
-                  this_.edit();
                }
             });
       }
