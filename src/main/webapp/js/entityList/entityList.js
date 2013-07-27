@@ -12,12 +12,8 @@ geomatico.entityList = function() {
                   geomatico.entityLine().init(entityPath + "_" + index, div,
                      entityPath, item, renderer);
                });
-               var newEntityDiv = $("<div>").addClass("entity-line").html(
-                  "New " + entityName + "...");
-               newEntityDiv.click(function() {
-                  $(document).trigger(entityPath + "-new");
-               });
-               div.append(newEntityDiv);
+               geomatico.newLine().init(entityPath + "_new", div,
+                  entityPath, "New " + entityName, renderer);
             });
          $("body").append(div);
       }

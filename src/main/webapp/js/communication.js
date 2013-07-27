@@ -1,4 +1,4 @@
-geomatico.communication = function () {
+geomatico.communication = function() {
    return {
       init : function() {
          $(document).bind('get', function(event, entityPath) {
@@ -9,7 +9,7 @@ geomatico.communication = function () {
                   // this is where we append a loading image
                },
                success : function(data) {
-                  $(document).trigger(entityPath + '-received', [data]);
+                  $(document).trigger(entityPath + '-received', [ data ]);
                },
                error : function() {
                   // failed request; give feedback to user
@@ -21,7 +21,25 @@ geomatico.communication = function () {
             $.ajax({
                type : 'PUT',
                url : '/olakease/api/' + entityPath,
-               contentType: "application/json",
+               contentType : "application/json",
+               data : $.toJSON(entity),
+               beforeSend : function() {
+                  // this is where we append a loading image
+               },
+               success : function(data) {
+                  $(document).trigger("get", entityPath);
+               },
+               error : function() {
+                  // failed request; give feedback to user
+                  console.log('error');
+               }
+            });
+         });
+         $(document).bind('post', function(event, entityPath, entity) {
+            $.ajax({
+               type : 'POST',
+               url : '/olakease/api/' + entityPath,
+               contentType : "application/json",
                data : $.toJSON(entity),
                beforeSend : function() {
                   // this is where we append a loading image
