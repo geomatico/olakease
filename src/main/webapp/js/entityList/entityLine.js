@@ -1,16 +1,46 @@
 geomatico.entityLine = function() {
    var divClass = "entity-line";
    var selectedDivClass = "selected-entity-line";
+
+   var div = null;
+   var btnModify = null;
+   var btnSave = null;
+   var btnCancel = null;
+   var readOnlyDiv = null;
+   var readWriteDiv = null;
    return {
+      edit : function() {
+         readOnlyDiv.hide();
+         btnModify.hide();
+         readWriteDiv.show();
+         btnCancel.show();
+         btnSave.show();
+      },
+      selected : function() {
+         div.addClass(selectedDivClass);
+         readOnlyDiv.show();
+         btnModify.show();
+         readWriteDiv.hide();
+         btnCancel.hide();
+         btnSave.hide();
+      },
+      unselected : function() {
+         div.removeClass(selectedDivClass);
+         readOnlyDiv.show();
+         btnModify.hide();
+         readWriteDiv.hide();
+         btnCancel.hide();
+         btnSave.hide();
+      },
       init : function(index, parent, entityPath, entity, fields) {
+         var this_ = this;
          var text = "";
          var separator = "";
          for ( var i in fields) {
             text += separator + entity[fields[i]];
             separator = ":";
          }
-         var div = $("<div>").addClass(divClass);
-         var readOnlyDiv, readWriteDiv;
+         div = $("<div>").addClass(divClass);
          {
             readOnlyDiv = $("<div>").addClass("entity-content").html(text);
             div.append(readOnlyDiv);
@@ -25,7 +55,7 @@ geomatico.entityLine = function() {
             div.append(readWriteDiv);
          }
          {
-            var btnModify = $("<div>").html("MODIFY").addClass("entity-button")
+            btnModify = $("<div>").html("MODIFY").addClass("entity-button")
                .hide();
             div.append(btnModify);
             btnModify.click(function(event) {
@@ -34,44 +64,45 @@ geomatico.entityLine = function() {
             });
          }
          {
-            var btnSave = $("<div>").html("SAVE").addClass("entity-button")
-               .hide();
+            btnSave = $("<div>").html("SAVE").addClass("entity-button").hide();
             div.append(btnSave);
-            btnSave.click(function() {
+            btnSave.click(function(event) {
                for ( var f in fields) {
                   entity[fields[f]] = $("#" + index + "_" + fields[f]).val();
                }
+               this_.selected();
                $(document).trigger("put", [ entityPath, entity ]);
-               btnModify.hide();
-               btnSave.hide();
+               event.stopPropagation();
+            });
+         }
+         {
+            btnCancel = $("<div>").html("CANCEL").addClass("entity-button")
+               .hide();
+            div.append(btnCancel);
+            btnCancel.click(function(event) {
+               this_.selected();
                event.stopPropagation();
             });
          }
          parent.append(div);
 
          div.click(function() {
-            $(document).trigger(entityPath + "-selected", entity);
+            if (!div.hasClass(selectedDivClass)) {
+               $(document).trigger(entityPath + "-selected", entity);
+            }
          });
          $(document).bind(entityPath + "-selected",
             function(event, selectedEntity) {
                if (entity.id == selectedEntity.id) {
-                  div.addClass(selectedDivClass);
-                  btnModify.show();
+                  this_.selected();
                } else {
-                  div.removeClass(selectedDivClass);
-                  btnModify.hide();
-                  btnSave.hide();
-                  readWriteDiv.hide();
-                  readOnlyDiv.show();
+                  this_.unselected();
                }
             });
          $(document).bind(entityPath + "-toModify",
             function(event, selectedEntity) {
                if (entity.id == selectedEntity.id) {
-                  readOnlyDiv.hide();
-                  readWriteDiv.show();
-                  btnModify.hide();
-                  btnSave.show();
+                  this_.edit();
                }
             });
       }
