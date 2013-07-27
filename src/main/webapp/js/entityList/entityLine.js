@@ -1,3 +1,26 @@
+geomatico.createReadWriteDiv = function(fields, index, getInitValues) {
+   var div = $("<div>").addClass("entity-content").hide();
+   for ( var f in fields) {
+      div.append(fields[f] + ":").append(
+         $("<input id='" + index + "_" + fields[f] + "' type='text' value='"
+            + getInitValues(fields[f]) + "'/>"));
+   }
+
+   return div;
+};
+geomatico.createSaveButton = function(fields, sourceEntity, entityPath, index,
+   restMethod, line) {
+   var btn = $("<div>").html("SAVE").addClass("entity-button").hide();
+   btn.click(function(event) {
+      for ( var f in fields) {
+         sourceEntity[fields[f]] = $("#" + index + "_" + fields[f]).val();
+      }
+      line.selected();
+      $(document).trigger(restMethod, [ entityPath, sourceEntity ]);
+      event.stopPropagation();
+   });
+   return btn;
+};
 geomatico.entityLine = function() {
    var divClass = "entity-line";
    var selectedDivClass = "selected-entity-line";
@@ -32,7 +55,7 @@ geomatico.entityLine = function() {
          btnCancel.hide();
          btnSave.hide();
       },
-      init : function(index, parent, entityPath, entity, fields) {
+      init : function(lineIndex, parent, entityPath, entity, fields) {
          var this_ = this;
          var text = "";
          var separator = "";
@@ -46,12 +69,10 @@ geomatico.entityLine = function() {
             div.append(readOnlyDiv);
          }
          {
-            readWriteDiv = $("<div>").addClass("entity-content").hide();
-            for ( var f in fields) {
-               readWriteDiv.append(fields[f] + ":").append(
-                  $("<input id='" + index + "_" + fields[f]
-                     + "' type='text' value='" + entity[fields[f]] + "'/>"));
-            }
+            readWriteDiv = geomatico.createReadWriteDiv(fields, lineIndex,
+               function(key) {
+                  return entity[key];
+               });
             div.append(readWriteDiv);
          }
          {
@@ -64,16 +85,9 @@ geomatico.entityLine = function() {
             });
          }
          {
-            btnSave = $("<div>").html("SAVE").addClass("entity-button").hide();
+            btnSave = geomatico.createSaveButton(fields, entity, entityPath,
+               lineIndex, "put", this_);
             div.append(btnSave);
-            btnSave.click(function(event) {
-               for ( var f in fields) {
-                  entity[fields[f]] = $("#" + index + "_" + fields[f]).val();
-               }
-               this_.selected();
-               $(document).trigger("put", [ entityPath, entity ]);
-               event.stopPropagation();
-            });
          }
          {
             btnCancel = $("<div>").html("CANCEL").addClass("entity-button")

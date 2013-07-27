@@ -8,7 +8,7 @@ geomatico.newLine = function() {
    var readOnlyDiv = null;
    var readWriteDiv = null;
    return {
-      edit : function() {
+      selected : function() {
          readOnlyDiv.hide();
          readWriteDiv.show();
          btnCancel.show();
@@ -21,7 +21,7 @@ geomatico.newLine = function() {
          btnCancel.hide();
          btnSave.hide();
       },
-      init : function(index, parent, entityPath, text, fields) {
+      init : function(lineIndex, parent, entityPath, text, fields) {
          var this_ = this;
          div = $("<div>").addClass(divClass);
          {
@@ -29,26 +29,16 @@ geomatico.newLine = function() {
             div.append(readOnlyDiv);
          }
          {
-            readWriteDiv = $("<div>").addClass("entity-content").hide();
-            for ( var f in fields) {
-               readWriteDiv.append(fields[f] + ":").append(
-                  $("<input id='" + index + "_" + fields[f]
-                     + "' type='text' value=''/>"));
-            }
+            readWriteDiv = geomatico.createReadWriteDiv(fields, lineIndex,
+               function(key) {
+                  return '';
+               });
             div.append(readWriteDiv);
          }
          {
-            btnSave = $("<div>").html("SAVE").addClass("entity-button").hide();
+            btnSave = geomatico.createSaveButton(fields, {}, entityPath,
+               lineIndex, "post", this_);
             div.append(btnSave);
-            btnSave.click(function(event) {
-               var entity = {};
-               for ( var f in fields) {
-                  entity[fields[f]] = $("#" + index + "_" + fields[f]).val();
-               }
-               this_.unselected();
-               $(document).trigger("post", [ entityPath, entity ]);
-               event.stopPropagation();
-            });
          }
          {
             btnCancel = $("<div>").html("CANCEL").addClass("entity-button")
@@ -62,7 +52,7 @@ geomatico.newLine = function() {
          parent.append(div);
 
          div.click(function() {
-            this_.edit();
+            this_.selected();
          });
       }
    };
