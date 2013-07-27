@@ -3,13 +3,9 @@ geomatico.app = function() {
       init : function() {
          geomatico.communication().init();
          geomatico.entityList().init("PROJECTS", "project", "projects",
-            function(project) {
-               return project.name + ": " + project.description;
-            });
+            [ "name", "description" ]);
          geomatico.entityList().init("DEVELOPERS", "developer", "developers",
-            function(developer) {
-               return developer.name;
-            });
+            [ "name" ]);
          $(document).trigger("get", "projects");
          $(document).trigger("get", "developers");
       }
