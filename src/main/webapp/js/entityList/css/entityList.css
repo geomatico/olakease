@@ -12,7 +12,7 @@
 
 .entity-content {
 	line-height: 4em;
-	display: inline;
+	display: inline-block;
 }
 
 .entity-button {

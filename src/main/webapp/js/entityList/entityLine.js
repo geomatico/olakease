@@ -28,8 +28,9 @@ geomatico.entityLine = function() {
             var btnModify = $("<div>").html("MODIFY").addClass("entity-button")
                .hide();
             div.append(btnModify);
-            btnModify.click(function() {
+            btnModify.click(function(event) {
                $(document).trigger(entityPath + "-toModify", entity);
+               event.stopPropagation();
             });
          }
          {
@@ -41,6 +42,9 @@ geomatico.entityLine = function() {
                   entity[fields[f]] = $("#" + index + "_" + fields[f]).val();
                }
                $(document).trigger("put", [ entityPath, entity ]);
+               btnModify.hide();
+               btnSave.hide();
+               event.stopPropagation();
             });
          }
          parent.append(div);
