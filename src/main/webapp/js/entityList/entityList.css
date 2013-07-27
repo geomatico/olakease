@@ -1,14 +1,14 @@
-.project-panel {
+.entity-list {
 	border-width: 0px 0px 1px 0px;
 	border-style: solid;
 }
 
-.project-line {
+.entity-line {
 	border-width: 1px 1px 0px 1px;
 	border-style: solid;
 	padding: 2em;
 }
 
-.selected-project-line {
+.selected-entity-line {
 	background-color: #cccccc;
 }
