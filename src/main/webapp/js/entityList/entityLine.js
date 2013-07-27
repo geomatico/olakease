@@ -93,7 +93,7 @@ geomatico.entityLine = function() {
          });
          $(document).bind(entityPath + "-selected",
             function(event, selectedEntity) {
-               if (entity.id == selectedEntity.id) {
+               if (entity == selectedEntity) {
                   this_.selected();
                } else {
                   this_.unselected();
@@ -101,7 +101,7 @@ geomatico.entityLine = function() {
             });
          $(document).bind(entityPath + "-toModify",
             function(event, selectedEntity) {
-               if (entity.id == selectedEntity.id) {
+               if (entity == selectedEntity) {
                   this_.edit();
                }
             });
