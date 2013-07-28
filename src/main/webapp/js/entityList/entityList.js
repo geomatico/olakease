@@ -5,15 +5,17 @@ geomatico.entityList = function() {
          var div = $("<div>").addClass(divClass);
          $("body").append($("<div>").html(title));
          $(document).bind(
-            entityPath + "-received",
-            function(event, items) {
-               div.empty();
-               $.each(items, function(index, item) {
-                  geomatico.entityLine().init(entityPath + "_" + index, div,
-                     entityPath, item, renderer);
-               });
-               geomatico.newLine().init(entityPath + "_new", div,
-                  entityPath, "New " + entityName, renderer);
+            "get-received",
+            function(event, receivedEntityPath, items) {
+               if (receivedEntityPath == entityPath) {
+                  div.empty();
+                  $.each(items, function(index, item) {
+                     geomatico.entityLine().init(entityPath + "_" + index, div,
+                        entityPath, item, renderer);
+                  });
+                  geomatico.newLine().init(entityPath + "_new", div,
+                     entityPath, "New " + entityName, renderer);
+               }
             });
          $("body").append(div);
       }

@@ -1,7 +1,7 @@
 geomatico.app = function() {
    return {
       init : function() {
-         geomatico.communication().init("/olakease/api/");
+         geomatico.util.restModule().init("/olakease/api/");
          geomatico.entityList().init("PROJECTS", "project", "projects",
             [ "name", "description" ]);
          geomatico.entityList().init("DEVELOPERS", "developer", "developers",

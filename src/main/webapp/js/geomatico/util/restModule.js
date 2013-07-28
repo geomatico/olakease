@@ -1,41 +1,39 @@
-geomatico.communication = function() {
+geomatico.util.restModule = function() {
    return {
       basePath : null,
-      fncBeforeSend : function() {
-         // this is where we append a loading image
-         console.log("Sending request");
-      },
-      fncError : function() {
-         // failed request; give feedback to user
-         console.log("Error");
-      },
       getBaseAjaxElement : function(entityPath, method) {
          return {
             type : method,
             url : this.basePath + entityPath,
-            beforeSend : this.fncBeforeSend,
-            error : this.fncError
+            beforeSend : function() {
+               $(document).trigger("before-send");
+            },
+            error : new function(xhr, ajaxOptions, thrownError) {
+               $(document).trigger("after-receive");
+               var errorMessage = "General error";
+               if (typeof xhr != 'undefined') {
+                  errorMessage = xhr.responseText;
+               }
+               $(document).trigger("error", errorMessage);
+            }
          };
       },
       write : function(method, entityPath, entity) {
-         ajaxElement = this.getBaseAjaxElement(entityPath, method,
-            this.fncBeforeSend, this.fncError);
+         ajaxElement = this.getBaseAjaxElement(entityPath, method);
          ajaxElement.contentType = "application/json";
          ajaxElement.data = $.toJSON(entity);
          ajaxElement.success = function(data) {
+            $(document).trigger("after-receive");
             $(document).trigger("get", entityPath);
          };
          $.ajax(ajaxElement);
       },
-      init : function(basePath, fncBeforeSend, fncError) {
+      /**
+       * @basePath All the operations are relative to this URL.
+       */
+      init : function(basePath) {
          var this_ = this;
          this.basePath = basePath;
-         if (fncBeforeSend == null) {
-            this.fncBeforeSend = fncBeforeSend;
-         }
-         if (fncError == null) {
-            this.fncError = fncError;
-         }
 
          $(document).bind(
             'get',
@@ -43,7 +41,8 @@ geomatico.communication = function() {
                ajaxElement = $.proxy(this_.getBaseAjaxElement, this_)(
                   entityPath, "GET");
                ajaxElement.success = function(data) {
-                  $(document).trigger(entityPath + '-received', [ data ]);
+                  $(document).trigger("after-receive");
+                  $(document).trigger("get-received", [ entityPath, data ]);
                };
                $.ajax(ajaxElement);
             });
@@ -59,6 +58,7 @@ geomatico.communication = function() {
                ajaxElement = $.proxy(this_.getBaseAjaxElement, this_)(
                   entityPath, "DELETE");
                ajaxElement.success = function(data) {
+                  $(document).trigger("after-receive");
                   $(document).trigger("get", collectionPath);
                };
                $.ajax(ajaxElement);

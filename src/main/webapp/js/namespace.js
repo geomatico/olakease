@@ -1,1 +1,3 @@
-var geomatico = {};
+var geomatico = {
+   util : {}
+};
