@@ -1,27 +1,25 @@
 geomatico.communication = function() {
    return {
-      beforeSend : function() {
+      basePath : null,
+      fncBeforeSend : function() {
          // this is where we append a loading image
          console.log("Sending request");
       },
-      error : function() {
+      fncError : function() {
          // failed request; give feedback to user
          console.log("Error");
       },
-      getBaseAjaxElement : function(basePath, entityPath, method,
-         fncBeforeSend, fncError) {
+      getBaseAjaxElement : function(entityPath, method) {
          return {
             type : method,
-            url : basePath + entityPath,
-            beforeSend : (fncBeforeSend == null) ? this.beforeSend
-               : fncBeforeSend,
-            error : (fncError == null) ? this.error : fncError
+            url : this.basePath + entityPath,
+            beforeSend : this.fncBeforeSend,
+            error : this.fncError
          };
       },
-      write : function(method, basePath, entityPath, entity, fncBeforeSend,
-         fncError) {
-         ajaxElement = this.getBaseAjaxElement(basePath, entityPath, method,
-            fncBeforeSend, fncError);
+      write : function(method, entityPath, entity) {
+         ajaxElement = this.getBaseAjaxElement(entityPath, method,
+            this.fncBeforeSend, this.fncError);
          ajaxElement.contentType = "application/json";
          ajaxElement.data = $.toJSON(entity);
          ajaxElement.success = function(data) {
@@ -31,33 +29,35 @@ geomatico.communication = function() {
       },
       init : function(basePath, fncBeforeSend, fncError) {
          var this_ = this;
+         this.basePath = basePath;
+         if (fncBeforeSend == null) {
+            this.fncBeforeSend = fncBeforeSend;
+         }
+         if (fncError == null) {
+            this.fncError = fncError;
+         }
+
          $(document).bind(
             'get',
             function(event, entityPath) {
-               ajaxElement = $.proxy(this_.getBaseAjaxElement, this_)(basePath,
-                  entityPath, "GET", fncBeforeSend, fncError);
+               ajaxElement = $.proxy(this_.getBaseAjaxElement, this_)(
+                  entityPath, "GET");
                ajaxElement.success = function(data) {
                   $(document).trigger(entityPath + '-received', [ data ]);
                };
                $.ajax(ajaxElement);
             });
-         $(document).bind(
-            'put',
-            function(event, entityPath, entity) {
-               $.proxy(this_.write, this_)("PUT", basePath, entityPath, entity,
-                  fncBeforeSend, fncError);
-            });
-         $(document).bind(
-            'post',
-            function(event, entityPath, entity) {
-               $.proxy(this_.write, this_)("POST", basePath, entityPath,
-                  entity, fncBeforeSend, fncError);
-            });
+         $(document).bind('put', function(event, entityPath, entity) {
+            $.proxy(this_.write, this_)("PUT", entityPath, entity);
+         });
+         $(document).bind('post', function(event, entityPath, entity) {
+            $.proxy(this_.write, this_)("POST", entityPath, entity);
+         });
          $(document).bind(
             'delete',
             function(event, collectionPath, entityPath) {
-               ajaxElement = $.proxy(this_.getBaseAjaxElement, this_)(basePath,
-                  entityPath, "DELETE", fncBeforeSend, fncError);
+               ajaxElement = $.proxy(this_.getBaseAjaxElement, this_)(
+                  entityPath, "DELETE");
                ajaxElement.success = function(data) {
                   $(document).trigger("get", collectionPath);
                };
