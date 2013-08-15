@@ -14,9 +14,10 @@ import co.geomati.olakease.persistence.Project;
 
 public class AssignmentsTest extends AbstractResourceManagementTest<Assignment> {
 
+	private static final double DELTA = 1e-15;
+
 	private static final int POST_WORKING_HOURS = 142;
-	private static final Date POST_START_DATE = new Date(
-			System.currentTimeMillis());
+	private static final Date POST_START_DATE = new Date(1344988800000L);// 15-8-2012
 	private static final int POST_HOURS_DAY_DEDICATION = 4;
 	private Developer POST_DEVELOPER_ID;
 	private Project POST_PROJECT_ID;
@@ -74,12 +75,13 @@ public class AssignmentsTest extends AbstractResourceManagementTest<Assignment> 
 	@Override
 	protected void checkResourceIsEqualPosted(Assignment assignment) {
 		assertEquals(POST_HOURS_DAY_DEDICATION,
-				assignment.getHoursDayDedication());
+				assignment.getHoursDayDedication(), DELTA);
 		assertEquals(POST_START_DATE, assignment.getStart());
-		assertEquals(POST_WORKING_HOURS, assignment.getWorkingHours());
+		assertEquals(POST_WORKING_HOURS, assignment.getWorkingHours(), DELTA);
 		assertEquals(POST_DEVELOPER_ID.getId(), assignment.getDeveloper()
-				.getId());
-		assertEquals(POST_PROJECT_ID.getId(), assignment.getProject().getId());
+				.getId(), DELTA);
+		assertEquals(POST_PROJECT_ID.getId(), assignment.getProject().getId(),
+				DELTA);
 	}
 
 	@Override
@@ -97,9 +99,10 @@ public class AssignmentsTest extends AbstractResourceManagementTest<Assignment> 
 	@Override
 	protected void checkResourceIsModified(Assignment updatedAssignment) {
 		assertEquals(PUT_HOURS_DAY_DEDICATION,
-				updatedAssignment.getHoursDayDedication());
+				updatedAssignment.getHoursDayDedication(), DELTA);
 		assertEquals(PUT_START_DATE, updatedAssignment.getStart());
-		assertEquals(PUT_WORKING_HOURS, updatedAssignment.getWorkingHours());
+		assertEquals(PUT_WORKING_HOURS, updatedAssignment.getWorkingHours(),
+				DELTA);
 		assertEquals(PUT_DEVELOPER_ID.getId(), updatedAssignment.getDeveloper()
 				.getId());
 		assertEquals(PUT_PROJECT_ID.getId(), updatedAssignment.getProject()
