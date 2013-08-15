@@ -16,14 +16,10 @@
 }
 
 .entity-button {
-	border-width: 0px 1px 0px 0px;
+	border-width: 0px 0px 0px 1px;
 	border-style: solid;
 	background-color: #bbbbbb;
-	float: left;
+	float: right;
 	padding: 0 10px 0 10px;
 	height: 4em;
-}
-
-.selected-entity-line {
-	background-color: #cccccc;
 }

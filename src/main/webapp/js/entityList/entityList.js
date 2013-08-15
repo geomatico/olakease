@@ -1,9 +1,9 @@
 geomatico.entityList = function() {
    var divClass = "entity-list";
    return {
-      init : function(title, entityName, entityPath, renderer) {
+      init : function(parentDiv, title, entityName, entityPath, renderer) {
          var div = $("<div>").addClass(divClass);
-         $("body").append($("<div>").html(title));
+         parentDiv.append($("<div>").html(title));
          $(document).bind(
             "get-received",
             function(event, receivedEntityPath, items) {
@@ -13,11 +13,13 @@ geomatico.entityList = function() {
                      geomatico.entityLine().init(entityPath + "_" + index, div,
                         entityPath, item, renderer);
                   });
-                  geomatico.newLine().init(entityPath + "_new", div,
-                     entityPath, "New " + entityName, renderer);
+                  geomatico.newLine()
+                     .init(div, entityPath, "New " + entityName);
                }
             });
-         $("body").append(div);
+         parentDiv.append(div);
+         
+         return this;
       }
    };
 };
