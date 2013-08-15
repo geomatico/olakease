@@ -85,6 +85,7 @@ public abstract class AbstractResourceManagementTest<TYPE extends Identifiable>
 		int resourceId = postedResource.getId();
 
 		modifyResource(message);
+		message.setId(resourceId);
 		Response putResponse = target(getPath()).request().put(
 				Entity.json(new ObjectMapper().writeValueAsString(message)));
 		assertEquals(200, putResponse.getStatus());
