@@ -1,0 +1,31 @@
+Create and update projects
+---------------------------
+
+* new-project.sh: name description budget_amount
+* update-project.sh: name set-clause
+* show-projects.sh:
+
+Developer allocation
+--------------------
+
+$ show-allocations.sh: [developer]
+$ add-allocation.sh: project developer start finish
+$ update-allocation.sh password id set-clause
+
+Task management
+---------------
+
+$ add-task.sh: project description num-hours
+$ show-tasks.sh: project
+$ update-task.sh: id set-clause
+$ add-hours.sh: developer_name task_id num-hours [date]
+$ update-hours.sh: id set-clause
+	
+Expenses
+--------
+
+$ show-expenses.sh: project
+$ new-expense.sh: project ...
+	
+	
+	 
