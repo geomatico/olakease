@@ -15,11 +15,20 @@ $ update-allocation.sh password id set-clause
 Task management
 ---------------
 
-$ add-task.sh: project description num-hours
+$ add-task.sh: project description estimated-hours
 $ show-tasks.sh: project
 $ update-task.sh: id set-clause
-$ add-hours.sh: developer_name task_id num-hours [date]
+$ start-hours.sh developer_name task_id
+$ stop-hours.sh developer_name
+$ add-hours.sh: developer_name task_id starting-date ending-date
 $ update-hours.sh: id set-clause
+$ show-hours.sh: developer_name
+
+Reports
+-------
+
+$ show-projects.sh
+$ daily-report.sh developer_name
 	
 Expenses
 --------
