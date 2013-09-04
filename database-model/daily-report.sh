@@ -8,9 +8,13 @@ if [ $open_segment != 0 ]
 	then echo Open Segment!!!!
 fi
 
+# Detailed worked hours
+echo Worked tasks
+mysql -u $database -p$pw -h fergonco.es $database -e "select t.description, t.hours as estimation,  (TIME_TO_SEC(TIMEDIFF(ending_time, starting_time))/3600) as worked from tasks t, work_segments s where s.task_id=t.id and developer_name='$developer_name' and starting_time > '$now'"
+
 # Show worked hours
 worked_hours=`mysql -u $database -p$pw -h fergonco.es $database -e "select sum(TIME_TO_SEC(TIMEDIFF(ending_time, starting_time))/3600) as '' from work_segments where developer_name='$developer_name' and starting_time > '$now' group by developer_name"`
-echo Worked hours: $worked_hours
+echo Total worked hours: $worked_hours
 
 # Ongoing projects
 echo Ongoing work:
