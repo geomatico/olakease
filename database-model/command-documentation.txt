@@ -8,9 +8,9 @@ Create and update projects
 Developer allocation
 --------------------
 
-$ show-allocations.sh: [developer]
-$ add-allocation.sh: project developer start finish
-$ update-allocation.sh password id set-clause
+$ show-allocations.sh: 
+$ add-allocation.sh: project start finish
+$ update-allocation.sh id set-clause
 
 Task management
 ---------------
@@ -18,11 +18,11 @@ Task management
 $ add-task.sh: project description estimated-hours
 $ show-tasks.sh: project
 $ update-task.sh: id set-clause
-$ start-hours.sh developer_name task_id
-$ stop-hours.sh developer_name
-$ add-hours.sh: developer_name task_id starting-date ending-date
+$ start-hours.sh task_id
+$ stop-hours.sh
+$ add-hours.sh: task_id starting-date ending-date
 $ update-hours.sh: id set-clause
-$ show-hours.sh: developer_name
+$ show-hours.sh:
 
 Reports
 -------

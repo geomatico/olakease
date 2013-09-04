@@ -1,4 +1,3 @@
-pw=($(<pw.dat))
-database=($(<database.dat))
+source read-config.sh
 
-mysql -u $database -p$pw -h fergonco.es $database -e "select * from work_segments where developer_name='$1'"
+mysql -u $database -p$pw -h fergonco.es $database -e "select * from work_segments where developer_name='$developer_name'"

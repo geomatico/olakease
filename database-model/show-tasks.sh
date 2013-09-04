@@ -1,5 +1,4 @@
-pw=($(<pw.dat))
-database=($(<database.dat))
+source read-config.sh
 
 where=''
 [ $1 ] && where="where project_name='$1'"

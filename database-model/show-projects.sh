@@ -1,5 +1,4 @@
-pw=($(<pw.dat))
-database=($(<database.dat))
+source read-config.sh
 
 echo PROJECTS TO BILL
 mysql -u $database -p$pw -h fergonco.es $database -e "select * from projects_to_bill"
