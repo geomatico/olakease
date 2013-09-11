@@ -21,6 +21,6 @@ echo Ongoing work:
 mysql -u $database -p$pw -h fergonco.es $database -e "select p.name, t.description, t.hours, (select sum(time_to_sec(timediff(s.ending_time, s.starting_time)))/3600 from work_segments s where t.id=s.task_id) as developed_hours from projects p, tasks t where t.project_name=p.name and 0 < (select count(*) from tasks t, work_segments s where t.project_name=p.name and t.id=s.task_id and s.developer_name='$developer_name') order by p.name desc"
 
 #The same as previous one but with totals
-mysql -u $database -p$pw -h fergonco.es $database -e "select p.name, sum(t.hours), sum((select sum(time_to_sec(timediff(s.ending_time, s.starting_time)))/3600 from work_segments s where t.id=s.task_id)) as developed_hours from projects p, tasks t where t.project_name=p.name and 0 < (select count(*) from tasks t, work_segments s where t.project_name=p.name and t.id=s.task_id and s.developer_name='$1') group by p.name order by p.name desc"
+mysql -u $database -p$pw -h fergonco.es $database -e "select p.name, sum(t.hours), sum((select sum(time_to_sec(timediff(s.ending_time, s.starting_time)))/3600 from work_segments s where t.id=s.task_id)) as developed_hours from projects p, tasks t where t.project_name=p.name and 0 < (select count(*) from tasks t, work_segments s where t.project_name=p.name and t.id=s.task_id and s.developer_name='$developer_name') group by p.name order by p.name desc"
 
 
