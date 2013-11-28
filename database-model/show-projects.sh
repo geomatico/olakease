@@ -1,5 +1,10 @@
 source read-config.sh
 
+echo PROJECTS BILLED
+echo ===============
+mysql -u $database -p$pw -h fergonco.es $database -e "select * from projects_billed"
+echo
+echo
 echo PROJECTS TO BILL
 echo =================
 mysql -u $database -p$pw -h fergonco.es $database -e "select * from projects_to_bill"
